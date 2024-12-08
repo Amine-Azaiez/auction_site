@@ -1,0 +1,576 @@
+/* General site styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #87CEFA; /* Light blue background for the entire header */
+    color: #fff;
+    padding: 10px;
+}
+
+nav {
+    background-color: #87CEFA; /* Ensure the nav has the same background color as the header */
+    padding: 10px;
+    align-items: center;
+    display: flex;
+    height: 40px; 
+}
+
+nav a {
+    color: #fff;
+    text-decoration: none;
+    margin: 10px;
+    padding: 10px;
+    background-color: #87CEFA; 
+    border-radius: 4px; /* Optional: rounded corners for the links */
+}
+
+nav a:hover {
+    background-color: #4169E1; /* Change to a different shade of blue on hover */
+}
+
+main {
+    padding: 20px;
+}
+
+img {
+    display: block; /* Removes any space below the image */
+    max-width: 100%; /* Ensures the image does not overflow its container */
+    height: auto; /* Keeps the aspect ratio of the image */
+}
+
+/* Auction list styles */
+.auction-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.auction-card {
+    position: relative;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    width: calc(33.333% - 60px); /* Adjust the width as needed */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center; /* Center the text and image */
+}
+
+.auction-image {
+    width: 100%;
+    height: 250px; /* Fixed height for the images */
+    object-fit: cover; /* Ensure images cover the area without distortion */
+    border-radius: 10px 10px 0 0; /* Round the top corners of the image */
+}
+
+.auction-card a {
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: none;
+    color: #333;
+    display: block;
+    margin: 10px 0; /* Space between the image and the title */
+}
+
+.auction-card p {
+    margin: 5px 0;
+}
+
+@media (max-width: 768px) {
+    .auction-card {
+        width: calc(50% - 20px); /* Adjust for tablet view */
+    }
+}
+
+@media (max-width: 480px) {
+    .auction-card {
+        width: calc(95% - 20px); /* Adjust for mobile view */
+    }
+}
+
+
+.current-bid {
+    display: inline-block;
+    color: rgb(176, 151, 11) !important;
+    font-weight: bold;
+}
+
+.centered-input {
+    text-align: center;
+    width: 25%;
+}
+
+.center-container {
+    display: flex;
+    justify-content: center;
+  }
+
+
+.green-container {
+    color: rgb(9, 154, 11) !important;
+    font-weight: bold;
+}
+
+/* General form styling */
+.form-group {
+    margin-bottom: 15px;
+    position: relative; /* Ensure that positioning is relative for child elements */
+}
+
+/* Label styling */
+.form-group label {
+    color: black; /* Ensure the label text is black */
+    font-weight: bold; /* Optional: Make label text bold */
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Styling for the Select2 dropdown */
+.select2-container {
+    width: auto; /* Adjust width if necessary */
+    display: inline-block; /* Ensure it doesn't take full width */
+    margin-left: 10px; /* Adjust this value to move the field to the right */
+    vertical-align: middle; /* Align with the label vertically */
+}
+
+.select2-selection {
+    border: 1px solid #ccc; /* Add a border to the selection box */
+    border-radius: 4px; /* Optional: Round corners of the selection box */
+    padding: 8px 12px; /* Adjust padding for better spacing */
+    height: auto; /* Remove fixed height */
+}
+
+.select2-selection__rendered {
+    color: black; /* Ensure the selected option text is black */
+}
+
+/* Styling for the dropdown items */
+.select2-results__option {
+    padding: 8px 12px; /* Adjust padding for dropdown items */
+    color: black; /* Ensure the text of dropdown items is black */
+}
+
+.select2-results__option--highlighted {
+    background-color: #e6e6e6; /* Highlight background for hovered items */
+}
+
+/* Optional: Add a border for better visibility */
+.select2-container--default .select2-selection--single {
+    border: 1px solid #ccc;
+}
+
+.filter_style {
+    background-color: #87CEFA; /* Ensure the it has the same background color as the header */
+    padding: 10px;
+    text-align: center;
+    width: 100%;
+    color: #fffefe;
+    font-size: medium;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Add some space between the elements */
+    align-items: center;
+}
+
+.filter_style .form-group {
+    flex: 1 1 100%; /* Make each form group take 100% width of the container */
+    display: flex;
+    flex-direction: column; /* Align label and input vertically */
+    align-items: center; 
+}
+
+.filter_style .form-group label,
+
+
+.filter_style .form-group input,
+.filter_style .form-group select {
+    width: 100%; /* Ensure the label and input/select occupy the full width */
+}
+
+.filter_style label {
+    margin-right: 10px; /* Space between label and form element */
+}
+
+
+.nav-logo {
+    /*height: 120px; /* Adjust the logo size as needed */
+    width: 80px;
+    
+
+    max-width: 15%;     /* Ensures the logo doesn't exceed the container's width */
+    height: auto;        /* Maintains aspect ratio */
+    object-fit: contain; /* Adjusts the image without trimming */
+    margin-right: 20px; /* Space between the logo and other links */
+
+
+}
+
+
+#message-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    text-align: center; /* Center the text inside the container */
+    
+}
+
+
+.alert {
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    color: white;
+    background-color: #4CAF50; /* Default to green for success */
+    opacity: 0.9;
+    transition: opacity 0.6s; /* Fade out transition */
+}
+
+/* Error message styling */
+.alert.error {
+    background-color: #f44336; /* Red for errors */
+}
+
+/* Success message styling */
+.alert.success {
+    background-color: #4CAF50; /* Green for success */
+}
+
+.icon-container {
+    position: relative;
+    display: inline-block;
+}
+
+.icon-class {
+    left: 0%;
+    display: inline-block;
+    vertical-align: middle;
+    width: 25px;  /* Set the width to a very small size */
+    height: 25px; /* Set the height to a very small size */
+    transition: transform 0.3s ease;
+}
+
+.icon-container:hover .icon-class {
+    transform: scale(1.5); /* Increase size by 50% on hover */
+}
+
+.bid-now-message {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: green;
+    font-size: 12px;
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    background-color: rgba(203, 233, 203, 0.8); /* Green background with some transparency */
+}
+
+.icon-container:hover .bid-now-message {
+    opacity: 1; /* Show the message on hover */
+}
+
+.fixed-bottom {
+    position: fixed; /* Fixes the element in place */
+    bottom: 5%; /* Aligns the element to the bottom of the viewport */
+    left: 25%; /* Aligns the element to the left of the viewport */
+    width: 50%; /* Makes the element span the entire width of the viewport */
+    background-color:#87CEFA; /* Sets a background color to ensure readability */
+    border-top: 1px solid #ccc; /* Optional: Adds a top border for separation */
+    padding: 10px; /* Optional: Adds some padding */
+    z-index: 1000; /* Ensures it is above other content */
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Optional: Adds a shadow for better visibility */
+    opacity: 0.90;
+    
+}
+
+.fixed-bottom .center-container {
+    text-align: center; /* Centers the text and button inside the container */
+}
+
+.pagination-container .pagination {
+    text-align: center;
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+.pagination {
+    text-align: center;
+    margin-top: 40px;   /* Increase space above the pagination */
+    margin-bottom: 40px; /* Increase space below the pagination */
+}
+
+.pagination .step-links a, .pagination .step-links .current {
+    margin: 0 5px;
+    padding: 8px 16px;
+    background-color: #f1f1f1;
+    border: 1px solid #ccc;
+    text-decoration: none;
+    color: #333;
+}
+
+.pagination .step-links a:hover {
+    background-color: #ddd;
+}
+
+.pagination .step-links .current {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.pagination-container .pagination a {
+    padding: 10px;
+    margin: 0 5px;
+    text-decoration: none;
+    color: #333;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+
+/* styles.css */
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 20px;
+}
+
+.user-info {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    /*justify-content: flex-end; /* Align items horizontally to the right */
+    right: 10px; /* Adjust as needed */
+    gap: 20px;
+}
+
+.user-avatar-info {
+    display: flex;
+    align-items: center; /* Align items vertically */
+    margin: 0; /* Reset margin if necessary */
+    gap: 15px;
+}
+
+.user-avatar-info .avatar {
+    width: 50px; /* Ensure the size matches your login avatar */
+    height: 50px; /* Ensure the size matches your login avatar */
+    border-radius: 50%; /* Make the avatar circular */
+    margin-left: 10px; /* Space between username and avatar */
+    
+}
+
+.favourite-icon {
+    position: absolute;
+    top: 35px;
+    right: 25px;
+    cursor: pointer;
+    
+    transition: color 0.6s; /* Smooth color transition */
+}
+
+.favourite-icon i {
+    
+    transition: color 0.7s; /* Smooth color transition */
+
+    transform: scale(1.1); 
+    transform-origin: center; /* Keep scaling relative to the center */
+}
+
+/* When the auction is favourited */
+.favourite-icon i.fa-star {
+    color: yellow;
+}
+
+/* When the auction is not favourited */
+.favourite-icon i.fa-star-o {
+    color: gray;
+}
+
+
+
+
+.auction-detail-container {
+    position: relative;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    
+}
+
+.auction-detail-container h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.auction-detail-container p {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    color: #555;
+}
+
+.auction-detail-container .current-bid {
+    font-weight: bold;
+    color: #d9534f; /* Bootstrap's danger color for emphasis */
+}
+
+.auction-detail-container img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+}
+
+.auction-detail-container video {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+}
+
+.form-row {
+    margin-bottom: 1rem;
+}
+
+.form-row label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.form-row input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.form-row button {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #0275d8; /* Bootstrap's primary color */
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.form-row button:hover {
+    background-color: #025aa5; /* Darker shade of primary color */
+}
+
+.form-row button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(38, 143, 255, 0.5); /* Bootstrap's focus ring color */
+}
+
+.center-container {
+    display: flex;
+    justify-content: center;
+  }
+
+
+
+.avatar-container {
+    position: relative;
+    display: inline-block;
+}
+
+.logout-link {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 10px;
+    background-color: #78c8fb;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    text-decoration: none;
+    color: #fff;
+}
+
+.avatar-container:hover .logout-link {
+    display: block;
+}
+
+
+.module.aligned {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Spacing between each form element */
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+/* Form row inside the aligned module */
+.module.aligned .form-row {
+    display: flex;
+    justify-content: flex-start; /* Align elements next to each other */
+    align-items: center;
+    gap: 10px; /* Space between label and input */
+}
+
+/* Styling for labels inside the aligned module */
+.module.aligned .form-row label {
+    width: auto; /* Auto width to fit the label's content */
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+/* Input, select, and textarea fields */
+.module.aligned .form-row input,
+.module.aligned .form-row select,
+.module.aligned .form-row textarea {
+    width: auto; /* Allow inputs to adjust to content size or container */
+    flex-grow: 1; /* Make the input stretch to take available space */
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+/* Checkbox alignment */
+.module.aligned .checkbox-row {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.module.aligned .checkbox-row label {
+    text-align: left;
+    width: auto;
+    margin-right: 5px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .module.aligned .form-row {
+        flex-direction: column; /* Stack labels and inputs vertically on smaller screens */
+        align-items: flex-start;
+    }
+
+    .module.aligned .form-row input,
+    .module.aligned .form-row select,
+    .module.aligned .form-row textarea {
+        width: 100%; /* Full width on smaller screens */
+    }
+}

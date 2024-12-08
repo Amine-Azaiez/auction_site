@@ -1,0 +1,287 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+
+
+{% block title %}
+    BidRealm  
+{% endblock %}
+
+{% block content %}
+
+<script>
+    console.log('Script loaded');  // Add this at the top
+    document.addEventListener("DOMContentLoaded", function() {
+
+        ///////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+        // Handle favourite icon click
+    // Favourite icon toggle logic
+    document.querySelectorAll('.favourite-icon').forEach(icon => {
+        console.log('Debugging : querrySelectorAll called');// Debugging
+        
+        icon.addEventListener('click', function() {
+            const auctionId = this.dataset.auctionId;
+            console.log('Debugging : Favorite icon clicked! Auction ID:', auctionId);// Debugging
+            let isFavourite; //= this.querySelector('i').classList.contains('fa-heart');
+            console.log('Debugging : Is Debugging :', isFavourite);// Debugging
+
+            fetch(`/auction/${auctionId}/favourite/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken') // Get CSRF token from cookies
+                },
+                body: JSON.stringify({ is_favourite: isFavourite })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Debugging : Response Data:', data);// Debugging
+                console.log('Debugging : Response Data.success :', data.success);// Debugging
+                if (data.success) {
+                    const iconElement = this.querySelector('i');
+
+                    console.log('Debugging : isFavourite:', isFavourite);// Debugging
+                    if(data.action=='added'){
+                        isFavourite=true
+                    } else {
+                        isFavourite=false
+                    }
+
+                    console.log('Debugging : isFavourite:', isFavourite);// Debugging
+
+                    if (isFavourite) {
+                        iconElement.classList.remove('fa-regular');
+                        iconElement.classList.add('fa-solid');
+                        iconElement.style.color = 'yellow';
+                    } else {
+                        
+                        iconElement.classList.remove('fa-solid');
+                        iconElement.classList.add('fa-regular');
+                        iconElement.style.color = 'gray';
+                    }
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+
+    // Utility function to get CSRF token from cookies
+    function getCookie(name) {
+        console.log(" Debugging : function getCookie called "); // Debugging
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.startsWith(`${name}=`)) {
+                console.log(" Debugging : CSRF Token:", decodeURIComponent(cookie.substring(name.length + 1))); // Debugging
+                return decodeURIComponent(cookie.substring(name.length + 1));
+            }
+        }
+        console.log("Debugging: CSRF Token not found");
+        return null;
+    }
+
+
+        ///////////////////////////////////////////////////////////////////////////////////////////
+        var formHeading = document.getElementById('id_nav_bar_top');//auctions_list
+        formHeading.scrollIntoView({ behavior: 'smooth' });
+
+
+
+        const categories = {
+            "All":["All"],
+            "Other sub category": ["Other"],
+            "Art": ["Paintings", "Sculptures", "Photographs", "Prints", "Drawings", "Mixed Media", "Installations"],
+            "Antiques": ["Furniture", "Clocks", "Decorative Arts", "Ceramics", "Glassware", "Metalware", "Textiles", "Rugs & Carpets"],
+            "Collectibles": ["Coins", "Stamps", "Sports Memorabilia", "Trading Cards", "Vintage Toys", "Comics", "Autographs", "Historical Memorabilia", "Military Items", "Movie Memorabilia"],
+            "Jewelry": ["Rings", "Necklaces", "Bracelets", "Earrings", "Watches", "Brooches", "Pendants"],
+            "Fashion": ["Clothing", "Handbags", "Shoes", "Accessories", "Vintage Fashion", "Designer Fashion"],
+            "Electronics": ["Mobile Phones", "Computers", "Cameras", "Audio Equipment", "Home Appliances", "Gadgets", "Video Games & Consoles"],
+            "Vehicles": ["Cars", "Motorcycles", "Bicycles", "Boats", "Aircraft", "RVs & Motorhomes", "Classic Cars"],
+            "Real Estate": ["Residential Properties", "Commercial Properties", "Land & Plots", "Vacation Homes", "Industrial Properties", "Agricultural Properties"],
+            "Books & Manuscripts": ["Rare Books", "First Editions", "Manuscripts", "Maps & Atlases"],
+            "Furniture": ["Antique Furniture", "Modern Furniture", "Designer Furniture", "Office Furniture"],
+            "Home & Garden": ["Garden Equipment", "Home Decor", "Kitchenware", "Lighting", "Tools & Workshop Equipment"],
+            "Musical Instruments": ["String Instruments", "Wind Instruments", "Percussion Instruments", "Keyboards", "Electronic Instruments"],
+            "Luxury Goods": ["Fine Watches", "High-end Jewelry", "Luxury Accessories"],
+            "Toys & Hobbies": ["Model Trains", "Dolls", "Action Figures", "Board Games", "Puzzles"],
+            "Industrial Equipment": ["Machinery", "Heavy Equipment", "Agricultural Equipment", "Construction Equipment"],
+            "Travel & Experiences": ["Vacation Packages", "Adventure Experiences", "Tickets to Events", "Guided Tours"],
+            "Health & Beauty": ["Skincare Products", "Makeup", "Haircare", "Personal Care Appliances"],
+            "Sports & Outdoors": ["Camping Equipment", "Fishing Gear", "Hunting Gear", "Sporting Goods", "Fitness Equipment"],
+            "Office Supplies": ["Office Furniture", "Office Equipment", "Stationery"],
+            "Memorabilia": ["Historical Memorabilia", "Celebrity Memorabilia", "Political Memorabilia"],
+            "Industrial Stocks": ["Manufacturing Stocks", "Technology Stocks", "Energy Stocks"],
+            "Agriculture Stocks": ["Wheat", "Corn", "Barley", "Oats", "Rye", "Rice", "Soybeans", "Sunflower Seeds", "Canola", "Flaxseed", "Peas", "Lentils", "Chickpeas", "Oranges", "Lemons", "Apples", "Strawberries", "Blueberries", "Grapes", "Potatoes", "Tomatoes", "Carrots", "Onions", "Sugar Cane", "Sugar Beets", "Maple Syrup", "Coffee", "Cocoa", "Tea", "Pepper", "Cinnamon", "Alfalfa", "Clover", "Timothy Hay", "Milk", "Cheese", "Butter", "Beef", "Pork", "Poultry", "Eggs", "Sheep", "Goats", "Horses", "Harvesters", "Tractors", "Plows", "Irrigation Systems", "Seeders", "Combines", "Fertilizers", "Nitrogen", "Phosphorus", "Potassium", "Pesticides", "Herbicides", "Insecticides", "Fungicides", "Seeds", "Field Crops", "Vegetables", "Fruits"],
+        };
+
+        const categorySelect = document.getElementById('id_category');
+
+        // Get the selected category from the Django context (passed from the view)
+        const selectedCategory = "{{ selected_category|escapejs }}";
+
+        for (const [category, subcategories] of Object.entries(categories)) {
+            // Create option for the category
+            const option = document.createElement('option');
+            option.value = category;
+            option.textContent = category;
+
+            // Set the selected attribute if it matches the selected category
+            option.selected = (category === selectedCategory);
+
+            categorySelect.appendChild(option);
+
+            // Create options for the subcategories
+            subcategories.forEach(subcategory => {
+                const subOption = document.createElement('option');
+                subOption.value = `${category} - ${subcategory}`;
+                subOption.textContent = `-- ${subcategory}`;
+
+                // Set the selected attribute if it matches the selected category
+                subOption.selected = (`${category} - ${subcategory}` === selectedCategory);
+
+                categorySelect.appendChild(subOption);
+            });
+        }
+
+            
+
+    });
+
+    document.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', (event) => {
+            // Store the scroll position in the browser history state
+            history.pushState({ scrollPos: window.scrollY }, '', document.URL);
+        });
+    });
+
+    window.addEventListener('popstate', (event) => {
+        if (event.state && event.state.scrollPos !== undefined) {
+            // Restore the scroll position if it exists in the state
+            window.scrollTo(0, event.state.scrollPos);
+        }
+
+
+         
+
+    // Store scroll position on link click
+    document.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', (event) => {
+            history.pushState({ scrollPos: window.scrollY }, '', document.URL);
+        });
+    });
+
+    window.addEventListener('popstate', (event) => {
+        if (event.state && event.state.scrollPos !== undefined) {
+            window.scrollTo(0, event.state.scrollPos);
+        }
+    });
+
+
+
+    });
+    
+</script>
+
+<div> 
+<form method="get" action="" class="filter_style">
+    <div class="filter_style">
+        
+            <label for="id_category">Category</label>
+            <!-- {{ form.category }} -->
+            <select id="id_category" name="category">
+            <!-- Options will be dynamically inserted by JavaScript -->
+            </select>
+            
+        
+        
+            <label for="id_start_date">Start Date</label>
+            {{ form.start_date }}
+        
+        
+            <label for="id_end_date">End Date</label>
+            {{ form.end_date }}
+        
+        
+            <label for="id_min_bid">Min Bid</label>
+            {{ form.min_bid }}
+        
+            <label for="id_order_by">Order by:</label>
+            {{ form.order_by }}
+
+            <button type="submit" class="btn btn-primary">Filter</button>
+    </div>
+</form>
+</div>
+
+<h1 id="auctions_list">
+
+    {% if list_option == 'favourite' %}
+        <div class="center-container">My Favourites </div>
+    {% elif list_option == 'my_auctions' %}
+        <div class="center-container">My Auctions </div>
+    {% elif list_option == 'open' %}
+        <div class="center-container">Open Auctions </div>
+    {% else %}
+        <div class="center-container">All Auctions </div>
+    {% endif %}
+
+
+</h1>
+
+<div class="auction-list">
+    {% for data in auction_data %}
+        <div class="auction-card"> 
+            
+            <div class="favourite-icon" data-auction-id="{{ data.auction.id }}">
+                <i class="fa {% if data.is_favourite %}fa-solid fa-star{% else %}fa-regular fa-star{% endif %}" style="color: {% if data.is_favourite %}yellow{% else %}gray{% endif %}; font-size: 30px;"></i>
+            </div>
+            <a href="{% url 'auction_detail' data.auction.pk %}"><img src="{{ data.image_url }}" alt="{{ data.auction.title }}" class="auction-image"></a>
+            <a href="{% url 'auction_detail' data.auction.pk %}">{{ data.auction.title }}</a>
+            <p><b>Start Date:</b> {{ data.auction.start_date }}</p>
+            <p><b>End Date:</b> {{ data.auction.end_date }}</p>
+            <p><b>Initial Price:</b> {{ data.auction.initial_price }}</p>
+            {% if data.auction.end_date <= current_time %} 
+                <p><b class="current-bid">Final Bid: {{ data.auction.current_bid }}</b></p>
+            {% else %}
+                <p><b class="current-bid">Current Bid: {{ data.auction.current_bid }}</b></p>
+                <div class="icon-container" style="float: right;"> 
+                        <p style="position: relative;" >
+                            <a href="{% url 'auction_detail' data.auction.pk %}" class="icon-class" >
+                            <img src="{% static 'images/bid_now.png' %}" class="icon-class" alt="Bid Now!">
+                            <span class="bid-now-message">Bid Now!</span>
+                        </a>
+                        </p>
+                </div>
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>
+
+<div class="pagination.container">
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1&list_option={{ list_option }}&category={{ form.category.value }}&order_by={{ form.order_by.value }}&start_date={{ form.start_date.value }}&end_date={{ form.end_date.value }}&min_bid={{ form.min_bid.value }}">First</a>
+                <a href="?page={{ page_obj.previous_page_number }}&list_option={{ list_option }}&category={{ form.category.value }}&order_by={{ form.order_by.value }}&start_date={{ form.start_date.value }}&end_date={{ form.end_date.value }}&min_bid={{ form.min_bid.value }}">Previous</a>
+            {% endif %}
+    
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+    
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}&list_option={{ list_option }}&category={{ form.category.value }}&order_by={{ form.order_by.value }}&start_date={{ form.start_date.value }}&end_date={{ form.end_date.value }}&min_bid={{ form.min_bid.value }}">Next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}&list_option={{ list_option }}&category={{ form.category.value }}&order_by={{ form.order_by.value }}&start_date={{ form.start_date.value }}&end_date={{ form.end_date.value }}&min_bid={{ form.min_bid.value }}">Last</a>
+            {% endif %}
+        </span>
+    </div> 
+</div>
+
+{% endblock %}
+
+
+

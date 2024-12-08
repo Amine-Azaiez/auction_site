@@ -1,0 +1,109 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Auction Site{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="icon" href="{% static 'images/favicon.png' %}" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+
+    <!-- Chart.js from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.0.1/dist/chart.umd.min.js"></script>
+
+    <!-- Luxon (for date handling) from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3.0.1/build/global/luxon.min.js"></script>
+
+    <!-- Chart.js Luxon Adapter from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.2.0/dist/chartjs-adapter-luxon.min.js"></script>
+
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+</head>
+<body>
+    <header>
+        <nav>
+            <!--
+            <a href="{% url 'auction_list' %}">
+                <img src="{% static 'images/logo_transparent.png' %}" alt="BidRealm Logo" class="nav-logo">
+            </a>
+            -->
+            <!--
+            <a href="{% url 'auction_list' %}?list_option=open">
+            <img src="{% static 'images/logo_transparent.png' %}" alt="BidRealm Logo" class="nav-logo">
+            </a> 
+            -->
+            <img src="{% static 'images/logo_transparent.png' %}" alt="BidRealm Logo" class="nav-logo">
+            <a href="{% url 'auction_list' %}?list_option=open">Home</a>
+            <a href="{% url 'about_us' %}">About</a>
+            <a href="{% url 'contact_us' %}">Contact</a>
+            {% if user.is_authenticated %}
+                <div class="user-info">
+                    <span>Welcome,   {{ user.username }}</span>
+                    <div class="avatar-container">
+                        <img src="{{ user.avatar.url }}" alt="Avatar" class="avatar">
+                        <a href="{% url 'logout' %}" class="logout-link">Logout</a>
+                    </div>
+                </div>
+            {% else %}
+                <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'signup' %}">Signup</a>
+            {% endif %}
+        </nav>
+        <img src="{% static 'images/top-banner.jpg' %}" alt="Top Banner" style="width: 100%; height: auto; margin-top: 10px;">
+        <div id="id_nav_bar_top"><nav>
+            <a href="{% url 'auction_list' %}?list_option=my_auctions">My Auctions</a>
+            <a href="{% url 'auction_list' %}?list_option=closed">Closed Auctions</a>
+            <a href="{% url 'auction_list' %}?list_option=favourite">My Favourites</a>
+            <a href="{% url 'auction_list' %}?list_option=open">Open Auctions</a>
+            <a href="{% url 'add_auction' %}">Add Auction</a>
+            <a href="{% url 'auction_list' %}" onclick="history.back(); return false;">Back</a>
+        </nav></div>
+    </header>
+    <main>   
+        {% block content %}
+        {% endblock %}
+    
+        <nav>
+            <a href="{% url 'auction_list' %}?list_option=my_auctions">My Auctions</a>
+            <a href="{% url 'auction_list' %}?list_option=closed">Closed Auctions</a>
+            <a href="{% url 'auction_list' %}?list_option=favourite">My Favourites</a>
+            <a href="{% url 'auction_list' %}?list_option=open">Open Auctions</a>
+            <a href="{% url 'add_auction' %}">Add Auction</a>
+            <a href="{% url 'auction_list' %}" onclick="history.back(); return false;">Back</a>
+        </nav>
+    </main>
+
+        <!-- Messages Section -->
+<div id="message-container">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+</div>
+  <!-- JavaScript to automatically close the messages -->
+  <script>
+    window.onload = function() {
+        const messageContainer = document.getElementById('message-container');
+        if (messageContainer) {
+            setTimeout(function() {
+                messageContainer.style.display = 'none';
+            }, 4000);  // 
+        }
+    };
+</script>
+</body>
+    <nav>
+
+    <a href="{% url 'auction_list' %}">Home</a>
+    <a href="{% url 'about_us' %}">About</a>
+    <a href="{% url 'contact_us' %}">Contact</a>
+
+    </nav>
+</html>

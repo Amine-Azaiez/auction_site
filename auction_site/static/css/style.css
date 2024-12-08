@@ -1,0 +1,84 @@
+/* General site styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #87CEFA; /* Light blue background for the entire header */
+    color: #fff;
+    padding: 10px;
+}
+
+nav {
+    background-color: #87CEFA; /* Ensure the nav has the same background color as the header */
+    padding: 10px;
+}
+
+nav a {
+    color: #fff;
+    text-decoration: none;
+    margin: 0 10px;
+    padding: 5px 10px;
+    background-color: #87CEFA; 
+    border-radius: 4px; /* Optional: rounded corners for the links */
+}
+
+nav a:hover {
+    background-color: #4169E1; /* Change to a different shade of blue on hover */
+}
+
+main {
+    padding: 20px;
+}
+
+img {
+    display: block; /* Removes any space below the image */
+    max-width: 100%; /* Ensures the image does not overflow its container */
+    height: auto; /* Keeps the aspect ratio of the image */
+}
+
+/* Auction list styles */
+.auction-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.auction-card {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    width: calc(33.333% - 20px); /* Adjust the width as needed */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.auction-card a {
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: none;
+    color: #333;
+}
+
+.auction-card p {
+    margin: 5px 0;
+}
+
+@media (max-width: 768px) {
+    .auction-card {
+        width: calc(50% - 20px); /* Adjust for tablet view */
+    }
+}
+
+@media (max-width: 480px) {
+    .auction-card {
+        width: calc(100% - 20px); /* Adjust for mobile view */
+    }
+}
+
+.current-bid {
+    color: rgb(105, 90, 3) !important;
+    font-weight: bold;
+}

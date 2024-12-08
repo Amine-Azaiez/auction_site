@@ -1,0 +1,583 @@
+
+{% extends 'base.html' %}
+
+{% load static %} 
+
+{% block title %}Auction Detail{% endblock %}
+
+{% block content %}
+
+
+<script>
+
+    let bidChart; // Define bidChart in a global scope
+    let userNames;
+
+    document.addEventListener("DOMContentLoaded", function() {
+
+
+
+
+        {% if auction.location_latitude and auction.location_longitude %}
+                var lat = {{ auction.location_latitude }};
+                var lng = {{ auction.location_longitude }};
+                
+                // Initialize the map and set its view to the auction's coordinates
+                var map = L.map('map').setView([lat, lng], 13);
+
+                // Add OpenStreetMap tile layer
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(map);
+
+                // Add a marker to the auction location
+                L.marker([lat, lng]).addTo(map)
+                    .bindPopup('<b>{{ auction.title }}</b>')
+                    .openPopup();
+            {% endif %}
+
+
+
+    // Get the bid data from Django context
+const bidLabels = {{ bid_labels|safe }};
+const bidAmounts = {{ bid_amounts|safe }};
+      userNames = {{ user_names|safe }};
+const userAvatars = {{ user_avatars|safe }};
+
+// Check if there are any bids
+if (bidLabels.length === 0 || bidAmounts.length === 0) {
+    // Display a message or handle the empty state
+    document.getElementById('bidChart').innerHTML = '<p>No bid data available.</p>';
+} else {
+    
+// Convert bidLabels to Date objects and calculate min and max dates
+const bidDates = bidLabels.map(date => new Date(date));
+const minDate = new Date(Math.min(...bidDates));
+const maxDate = new Date(Math.max(...bidDates));
+maxDate.setMinutes(maxDate.getMinutes() + 120);
+
+
+// Calculate min and max values for the Y-axis
+const minAmount = Math.min(...bidAmounts);
+const maxAmount = Math.max(...bidAmounts);
+
+
+// Create the chart
+const ctx = document.getElementById('bidChart').getContext('2d');
+bidChart = new Chart(ctx, {
+    type: 'line', // Use 'line' type for a line chart
+    data: {
+        labels: bidLabels,
+        datasets: [{
+            label: 'Bid Amounts',
+            data: bidLabels.map((date, index) => ({
+                x: new Date(date),
+                y: bidAmounts[index]
+            })),
+            borderColor: 'rgba(75, 192, 192, 1)',
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderWidth: 2,
+            pointRadius: 5,
+            pointHoverRadius: 8,
+            tension: 0.1 // Smooth the line
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        const dataPoint = context.raw;
+                        const index = context.dataIndex;
+                        return [
+                            `Amount: $${dataPoint.y}`,
+                            `Bidder: ${userNames[index]}`
+                        ];
+                    },
+                    
+                },
+                
+            }
+        },
+        scales: {
+            x: {
+                type: 'time',
+                time: {
+                    unit: 'minute', // Adjust based on the granularity of your data
+                    displayFormats: {
+                        day: 'MMM D',
+                        month: 'MMM YYYY',
+                        year: 'YYYY'
+                    }
+                },
+                title: {
+                    display: true,
+                    text: 'Bid Date and Time'
+                },
+                ticks: {
+                    autoSkip: true,
+                    maxTicksLimit: 20
+                },
+                min: minDate.toISOString(), // Set min dynamically
+                max: maxDate.toISOString()  // Set max dynamically
+            },
+            y: {
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: 'Bid Amount'
+                },
+                min: minAmount > 0 ? minAmount * 0.9 : 0, // Set min dynamically, with a buffer if above zero
+                max: maxAmount * 1.2  // Set max dynamically, with a buffer
+            }
+        }
+    }
+});
+
+};
+
+
+
+                // Handle favourite icon click
+    // Favourite icon toggle logic
+    document.querySelectorAll('.favourite-icon').forEach(icon => {
+        console.log('Debugging : querrySelectorAll called');// Debugging
+        
+        icon.addEventListener('click', function() {
+            const auctionId = this.dataset.auctionId;
+            console.log('Debugging : Favorite icon clicked! Auction ID:', auctionId);// Debugging
+            let isFavourite; //= this.querySelector('i').classList.contains('fa-heart');
+            console.log('Debugging : Is Debugging :', isFavourite);// Debugging
+
+            fetch(`/auction/${auctionId}/favourite/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken') // Get CSRF token from cookies
+                },
+                body: JSON.stringify({ is_favourite: isFavourite })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Debugging : Response Data:', data);// Debugging
+                console.log('Debugging : Response Data.success :', data.success);// Debugging
+                if (data.success) {
+                    const iconElement = this.querySelector('i');
+
+                    console.log('Debugging : isFavourite:', isFavourite);// Debugging
+                    if(data.action=='added'){
+                        isFavourite=true
+                    } else {
+                        isFavourite=false
+                    }
+
+                    console.log('Debugging : isFavourite:', isFavourite);// Debugging
+
+                    if (isFavourite) {
+                        iconElement.classList.remove('fa-regular');
+                        iconElement.classList.add('fa-solid');
+                        iconElement.style.color = 'yellow';
+                    } else {
+                        
+                        iconElement.classList.remove('fa-solid');
+                        iconElement.classList.add('fa-regular');
+                        iconElement.style.color = 'gray';
+                    }
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+
+    // Utility function to get CSRF token from cookies
+    function getCookie(name) {
+        console.log(" Debugging : function getCookie called "); // Debugging
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.startsWith(`${name}=`)) {
+                console.log(" Debugging : CSRF Token:", decodeURIComponent(cookie.substring(name.length + 1))); // Debugging
+                return decodeURIComponent(cookie.substring(name.length + 1));
+            }
+        }
+        console.log("Debugging: CSRF Token not found");
+        return null;
+    }
+
+
+
+
+
+
+
+        // Scroll to the form heading
+        var formHeading = document.getElementById('fav_icon');
+        if (formHeading) {
+            formHeading.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Get form elements
+        var bidButton = document.getElementById('bid_button');
+        var bidForm = document.getElementById('bid_form');
+        var bidAmountInput = document.getElementById('bid_amount');
+
+        // Ensure currentBid and initialPrice are properly parsed
+        var currentBid = parseFloat("{{ auction.current_bid|default:'NaN'|safe }}");
+        var initialPrice = parseFloat("{{ auction.initial_price|default:0|safe }}");
+
+        // Debug values
+        console.log("Current Bid:", currentBid);
+        console.log("Initial Price:", initialPrice);
+
+        // Function to handle bid submission
+        function handleBidSubmission(event) {
+            event.preventDefault();  // Prevent default form submission
+
+            var bidAmount = parseFloat(bidAmountInput.value);
+
+            // Debug bid amount
+            console.log("Bid Amount:", bidAmount);
+
+            // Validate bid amount
+            if (isNaN(bidAmount)) {
+                alert('Please enter a valid bid amount.');
+                location.reload();
+
+                return;
+            }
+
+            if (bidAmount <= initialPrice) {
+                alert('Your bid must be higher than the initial price.');
+                location.reload();
+
+                return;
+            }
+
+            // If currentBid is NaN, treat it as initialPrice
+            if (isNaN(currentBid)) {
+                currentBid = initialPrice;
+            }
+
+            // Check bid amount against currentBid and initialPrice
+            if (bidAmount <= currentBid) {
+                alert('Your bid must be higher than the current bid.');
+                // Delay the reload until after the alert is dismissed
+                setTimeout(function() {
+                location.reload();
+             }, 2000);
+
+                return;
+            }
+
+            
+
+            // Submit the form if valid
+            bidForm.submit();
+        }
+
+        // Attach event listener to the bid button
+        bidButton.addEventListener('click', handleBidSubmission);
+
+        // Prevent form submission on Enter key press
+        bidForm.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();  // Prevent form submission on Enter key
+            }
+        });
+
+
+
+        // Countdown Timer
+        function calculateRemainingTime(endDate) {
+            var now = new Date().getTime();
+            var timeRemaining = endDate - now;
+
+            var days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+            var hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+            return {
+                days: days,
+                hours: hours,
+                minutes: minutes,
+                seconds: seconds,
+            };
+        }
+
+        function updateCountdown() {
+            var endDate = new Date("{{ auction.end_date|date:'Y-m-d H:i:s' }}").getTime();
+            var countdownElement = document.getElementById('countdown');
+
+            var time = calculateRemainingTime(endDate);
+
+            countdownElement.innerHTML = "Remaining Time:" + time.days + "d " + time.hours + "h " + time.minutes + "m " + time.seconds + "s ";
+
+            if (time.days + time.hours + time.minutes + time.seconds <= 0) {
+
+                countdownElement.innerHTML = '<span style="color: red;">Time out !</span>';
+                location.reload();
+            }
+
+            
+             
+
+        }
+
+        setInterval(updateCountdown, 1000);
+        
+
+        
+        const auctionId = "{{ auction.id }}";  // Django template variable
+    const socket = new WebSocket('ws://localhost:8000/ws/auction/' + auctionId + '/');
+
+    // Handle incoming messages
+    socket.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+
+        if (data.type === 'auction_update') {
+            // Handle auction update
+            console.log('Current Bid:', data.current_bid);
+            console.log('Current Bidder:', data.current_bidder);
+            console.log('Current Bidder avatar url :', data.avatar_url);
+
+            // Update the bid details on the page
+            document.getElementById('current-bid').innerText ="Current Bid:  " + data.current_bid;
+            document.getElementById('current-bidder').innerHTML = "<b>Current Bidder: </b>" + data.current_bidder + "<img src='" + data.avatar_url + "' alt='Avatar' class='avatar'>";
+            document.getElementById('current-bid').innerText ="Current Bid:  " + data.current_bid;
+            document.getElementById('current-bidder').innerHTML = "<b>Current Bidder: </b>" + data.current_bidder + "<img src='" + data.avatar_url + "' alt='Avatar' class='avatar'>";
+
+
+            // Add the new bid to the chart only if bidChart is initialized
+
+
+            newDate = new Date();
+            newAmount = parseFloat(data.current_bid);
+    
+            console.log('Debugging: newDate:', newDate);
+            console.log('Debugging: newAmount:', newAmount);
+            console.log('Debugging: BidChart:',bidChart)
+            //bidChart.update();
+
+    if (bidChart && bidChart.data && bidChart.data.labels && bidChart.data.datasets) {
+        
+
+        // Ensure that data structure exists
+        if (bidChart.data.labels && bidChart.data.datasets[0]) {
+            bidChart.data.labels.push(newDate);  // Add new date to x-axis
+            bidChart.data.datasets[0].data.push({
+                x: newDate,
+                y: newAmount, // Add new bid amount to y-axis
+                
+            });
+
+            userNames.push(data.current_bidder);
+            // Sort the data by x values (dates)
+
+            bidChart.data.datasets[0].data.sort((a, b) => a.x - b.x);
+
+
+
+            // Recalculate minDate and maxDate
+            const bidDates = bidChart.data.labels.map(date => new Date(date));
+            const minDate = new Date(Math.min(...bidDates));
+            const maxDate = new Date(Math.max(...bidDates));
+            maxDate.setMinutes(maxDate.getMinutes() + 120); // Add margin to maxDate
+
+            // Recalculate minAmount and maxAmount
+            const bidAmounts = bidChart.data.datasets[0].data.map(point => point.y);
+            const minAmount = Math.min(...bidAmounts);
+            const maxAmount = Math.max(...bidAmounts);
+
+            // Update chart axes with new min/max values
+            bidChart.options.scales.x.min = minDate.toISOString();
+            bidChart.options.scales.x.max = maxDate.toISOString();
+            bidChart.options.scales.y.min = minAmount > 0 ? minAmount * 0.9 : 0;
+            bidChart.options.scales.y.max = maxAmount * 1.2;
+
+
+
+
+
+            bidChart.update();  // Update the chart
+            console.log('Chart Updated !');
+        } else {
+            console.error('Chart labels or datasets are not initialized.');
+        }
+    } else {
+        console.error('bidChart or bidChart.data is not initialized.');
+    }
+
+
+
+
+
+
+
+
+
+
+        }
+    };
+
+    // Handle WebSocket open event
+    socket.onopen = function(event) {
+        console.log('WebSocket connection opened.');
+    };
+
+    // Handle WebSocket close event
+    socket.onclose = function(event) {
+        console.log('WebSocket connection closed.');
+    };
+
+    // Example function to send auction update (for testing)
+    function sendAuctionUpdate(currentBid, currentBidder) {
+        socket.send(JSON.stringify({
+            type: 'auction_update',
+            current_bid: currentBid,
+            current_bidder: currentBidder
+        }));
+    }
+
+    });
+</script>
+
+
+<div class="auction-detail-container">
+
+    <div  class="favourite-icon" data-auction-id="{{auction.id }}" id="fav_icon">
+        <i class="fa {% if is_favourite %}fa-solid fa-star{% else %}fa-regular fa-star{% endif %}" style="color: {% if is_favourite %}yellow{% else %}gray{% endif %}; font-size: 30px;"></i>
+    </div>
+
+    <h1 id="auction_detail_title" class="center-container"> {{ auction.title }}</h1>
+
+    {% if auction.end_date >= current_time %}
+
+     <div>
+         <div class="center-container"><p class='current-bid'><b ><h2 id='current-bid'>Current Bid: {{ auction.current_bid }}</h2></b></p></div>
+         <div class="center-container"><p class="user-avatar-info" id='current-bidder'><b>Current Bidder:</b> 
+         {% if auction.current_bidder %}
+             
+                {{ auction.current_bidder.username }}
+                <img src="{{ auction.current_bidder.avatar.url }}" alt="Avatar" class="avatar">
+             
+         {% else %}
+             None
+         {% endif %}
+        </p>
+         </div>
+     </div>
+
+    
+     <div class="center-container"><p class="green-container"><b> <span id="countdown"></span></b></p></div>
+    
+    
+    {% elif  auction.current_bidder %}
+
+    
+      <div>
+        <div class="center-container"><p><b><h2 class='current-bid' id='Final_bid_id'> Final Bid: {{ auction.current_bid }}</h2></b></p></div>
+        <div class="center-container"><p><b class="user-avatar-info"><h3 class='current-bid' id='Auction_winner_id'> Auction Winner:{{ auction.current_bidder.username }}<img src="{{ auction.current_bidder.avatar.url }}" alt="Avatar" class="avatar"></h3></p></b></div>   
+      </div>
+      <div class="center-container"><p><b style="color: red;"> Time Out !</b></p></div>
+   
+    {% else %}
+
+      <div class="center-container"><p class='current-bid'><b style="color: red;" > Unsold Auction ! </b></p></div>
+      <div class="center-container"><p><b style="color: red;"> Time Out !</b></p></div>
+    
+    {% endif %}
+
+    
+    <canvas id="bidChart" width="400" height="100"></canvas>
+    
+    <p><b>Category:</b> {{ auction.category }}</p>
+    <p><b>Description:</b> {{ auction.description }}</p>
+    <p><b>Start Date:</b> {{ auction.start_date }}</p>
+    <p><b>End Date:</b> {{ auction.end_date }}</p>
+    <p><b>Initial Price:</b> {{ auction.initial_price }}</p>
+    <p class="user-avatar-info">
+        <b>Seller:</b> {{ auction.seller.username }}
+        <img src="{{ auction.seller.avatar.url }}" alt="Avatar" class="avatar">
+    </p>
+
+    
+    
+    <!-- Map container for Leaflet.js -->
+
+
+    <!-- Display map if location is available -->
+    {% if auction.location_latitude and auction.location_longitude %}
+    <p><b>Location :</b></p>
+    <div id="map" style="height: 400px; width: 100%;"></div>
+    {% else %}
+    <p>Location not available for this auction.</p>
+    {% endif %}
+
+    <h2 class="center-container">Pictures</h2>
+
+    <div >
+    {% for picture in auction.pictures.all %}
+        <div class="center-container"><p><img src="{{ picture.image.url }}" alt="Auction Image"></p></div>
+    {% endfor %}
+    </div>
+
+    {% with has_videos=False %}
+    {% for video in auction.videos.all %}
+        {% if video %}
+            {% with has_videos=True %}
+            {% endwith %}
+        {% endif %}
+    {% endfor %}
+
+    {% if has_videos %}
+        <h2 class="center-container">Videos</h2>
+
+        <div class="center-container" style="padding-bottom: 20px;">
+            {% for video in auction.videos.all %}
+                {% if 'youtube.com' in video.video_url or 'youtu.be' in video.video_url %}
+                    <!-- Extract the video ID and embed the YouTube video using an iframe -->
+                    {% if 'youtube.com' in video.video_url %}
+                        {% with video_id=video.video_url|cut:"https://www.youtube.com/watch?v=" %}
+                            <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ video_id }}" frameborder="0" allowfullscreen></iframe>
+                        {% endwith %}
+                    {% elif 'youtu.be' in video.video_url %}
+                        {% with video_id=video.video_url|cut:"https://youtu.be/" %}
+                            <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ video_id }}" frameborder="0" allowfullscreen></iframe>
+                        {% endwith %}
+                    {% endif %}
+                {% else %}
+                    <!-- Handle direct video files -->
+                    <video controls>
+                        <source src="{{ video.video_url }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+
+
+
+    <div class="fixed-bottom">
+    {% if auction.end_date <= current_time %}
+        <p><h2 class="center-container"><b style="color: red;">Auction Closed</b></h2></p>
+    {% else %}
+        <!-- Bid Form -->
+        <form id="bid_form" method="post" action="{% url 'submit_bid' auction.pk %}">
+            {% csrf_token %}
+            <div class="form-row">
+                <div class="center-container"><label for="bid_amount" ><b>Your Bid:</b></label></div>
+                <div class="center-container" ><input type="number" id="bid_amount" name="bid_amount" step="{{ step }}" class="centered-input"  style="width:50%;" min="{{ minimum_required_bid }}" value="{{ minimum_required_bid }}" required></div>
+            </div>
+            <div class="center-container"><button id="bid_button" type="button" ><b>Bid Right Now !</b></button></div>
+        </form>
+    {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+
+
+{% block content %}
+<div class="about-us-container">
+    <h1 id="about_us_heading">About Us</h1>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var formHeading = document.getElementById('about_us_heading');
+            formHeading.scrollIntoView({ behavior: 'smooth' });
+    
+        });
+    </script>
+    
+
+    <div class="about-section">
+
+        <p>
+            Welcome to <strong>BidRealm</strong>, where we elevate auctions to a realm of unparalleled value. Our mission is to provide 
+            a secure, innovative platform for buyers and sellers to connect and create extraordinary opportunities. 
+        </p>
+    
+        <h2>Our Services</h2>
+        <p>
+            At BidRealm, we don't just connect buyers and sellers; we empower them with a range of additional services 
+            designed to maximize success and simplify the process:
+        </p>
+        <ul>
+            <li><strong>Marketing Services:</strong> We promote your auctions across premium platforms, including social media and targeted ad campaigns, ensuring maximum visibility for your listings.</li>
+            <li><strong>Legal Services:</strong> Need assistance with contracts or auction agreements? Our trusted legal partners provide seamless support to help you close deals securely and confidently. (Note: Legal services availability may vary based on your location.)</li>
+        </ul>
+    
+        <h2>Why Choose Us?</h2>
+        <p>
+            At BidRealm, we stand out by offering a complete ecosystem for auctions, tailored to meet the unique needs of our clients. 
+            From luxury properties to rare collectibles, we provide personalized solutions that help sellers succeed and buyers find value.
+        </p>
+        <p>
+            Explore the possibilities with <strong>BidRealm</strong>, where every auction is elevated to its full potential. 
+            Whether you're listing your assets or searching for your next big opportunity, we've got you covered.
+        </p>
+    
+        <h2>Get Started Today</h2>
+        <p>
+            Ready to experience the difference? <a href="{% url 'add_auction' %}">launch a new auction </a> or <a href="{% url 'auction_list' %}?list_option=open">explore open auctions</a> now, 
+            and let BidRealm take your auctions to the next level.
+        </p>
+    </div>
+    
+{% endblock %}
